@@ -7,3 +7,8 @@ cmake_minimum_required (VERSION 3.8)
 add_executable (GPGPU_with_OpenGL "GPGPU_with_OpenGL.cpp" "GPGPU_with_OpenGL.h")
 
 # TODO: Fügen Sie bei Bedarf Tests hinzu, und installieren Sie Ziele.
+
+target_link_libraries (GPGPU_with_OpenGL
+glfw
+libglew_static
+)
