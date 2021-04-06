@@ -5,9 +5,12 @@
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
+#include "shader.h"
 
 using namespace std;
 
+
+Shader* GPGPUShader = nullptr;
 
 GLFWwindow* window;
 
@@ -23,6 +26,8 @@ void init() {
 
 	glewExperimental = true;
 	glewInit();
+
+	GPGPUShader = new Shader("../../../../GPGPU_with_OpenGL/gpgpu.vert", "../../../../GPGPU_with_OpenGL/gpgpu.frag");
 
 }
 
