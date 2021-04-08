@@ -1,15 +1,10 @@
-﻿// GPGPU_with_OpenGL.cpp: Definiert den Einstiegspunkt für die Anwendung.
-//
-
-#include "GPGPU_with_OpenGL.h"
-
+﻿
+#include <iostream>
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include "shader.h"
 #include "gtc/matrix_transform.hpp"
-
-using namespace std;
-
+#include <ctime>
 
 Shader* GPGPUShader = nullptr;
 
@@ -22,7 +17,8 @@ GLuint fb;
 
 int N = 16;
 
-float* cpu_data = new float[N];
+float* cpu_data1 = new float[N];
+float* cpu_data2 = new float[N];
 
 float* result = new float[N];
 
@@ -40,8 +36,6 @@ int internal_format = GL_RGBA32F_ARB;
 
 int texture_format = GL_RGBA;
 
-
-
 void init() {
 
 	glfwInit();
@@ -54,9 +48,15 @@ void init() {
 
 	GPGPUShader = new Shader("../../../../GPGPU_with_OpenGL/gpgpu.vert", "../../../../GPGPU_with_OpenGL/gpgpu.frag");
 
-	//fill data
+	srand((unsigned)time(0));
+
+	//fill data with random values 
 	for (int i = 0; i < N; i++) {
-		cpu_data[i] = i;
+		cpu_data1[i] = (rand() % 6) + 1;
+	}
+
+	for (int i = 0; i < N; i++) {
+		cpu_data2[i] = (rand() % 6) + 1;
 	}
 	
 }
@@ -142,11 +142,11 @@ void render() {
 	//transfer data to gpu
 	glBindTexture(texture_target, xtexID);
 	glTexSubImage2D(texture_target, 0, 0, 0, texSize, texSize,
-		texture_format, GL_FLOAT, cpu_data);
+		texture_format, GL_FLOAT, cpu_data1);
 
 	glBindTexture(texture_target, ytexID);
 	glTexSubImage2D(texture_target, 0, 0, 0, texSize, texSize,
-		texture_format, GL_FLOAT, cpu_data);
+		texture_format, GL_FLOAT, cpu_data2);
 
 	//setup shader stuff
 
@@ -170,24 +170,26 @@ void render() {
 	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
 	glReadPixels(0, 0, texSize, texSize, texture_format, GL_FLOAT, result);
 
+	std::cout << "INPUT" << std::endl;
 	for (int i = 0; i < N; i++) {
-		std::cout << result[i] << std::endl;
+		std::cout << cpu_data1[i] << ", "; 
 	}
+	std::cout << std::endl;
 
-	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+	for (int i = 0; i < N; i++) {
+		std::cout << cpu_data2[i] << ", ";
 	}
+	std::cout << std::endl;
 
-
+	std::cout << "OUTPUT" << std::endl;
+	for (int i = 0; i < N; i++) {
+		std::cout << result[i] << ", ";
+	}
 }
 
 void cleanup() {
-	delete(cpu_data);
+	delete(cpu_data1);
+	delete(cpu_data2);
 	delete(result);
 	glDeleteFramebuffersEXT(1, &fb);
 	glDeleteTextures(1, &xtexID);
@@ -197,17 +199,12 @@ void cleanup() {
 
 int main()
 {
-
 	init();
 	initTexture();
 	initFBO();
 	setupScreenQuad();
-
 	render();
-
-
 	cleanup();
 
-	cout << "everything works!." << endl;
 	return 0;
 }
