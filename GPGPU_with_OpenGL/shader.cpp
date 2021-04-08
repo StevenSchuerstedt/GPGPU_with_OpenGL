@@ -142,3 +142,6 @@ void Shader::setMat4(const std::string &name, glm::mat4 value) {
 void Shader::setInt(const std::string &name, const int value) {
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
+void Shader::setIntARB(const std::string& name, const int value) {
+	glUniform1iARB(glGetUniformLocation(ID, name.c_str()), value);
+}

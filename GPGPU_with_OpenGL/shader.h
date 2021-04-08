@@ -15,5 +15,6 @@ public:
 	void use();
 	void setVec3(const std::string &name, glm::vec3 value);
 	void setInt(const std::string &name, const int value);
+	void setIntARB(const std::string& name, const int value);
 	void setMat4(const std::string &name, glm::mat4 value);
 };

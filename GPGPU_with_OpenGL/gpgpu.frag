@@ -1,13 +1,15 @@
 #version 330 core
 
 in vec2 texcoord;
-out vec4 FragColor;
 
-uniform sampler2D textureID;
+
+uniform sampler2DRect textureX;
+uniform sampler2DRect textureY;
 
 void main(){
 
+	vec4 x = texture2DRect(textureX, texcoord);
+	vec4 y = texture2DRect(textureY, texcoord);
 
-  FragColor = texture(textureID, texcoord);
-  
+	gl_FragColor = x + y;
 }
