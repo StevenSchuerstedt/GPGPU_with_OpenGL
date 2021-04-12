@@ -28,13 +28,15 @@ GLuint xtexID;
 GLuint ytexID;
 GLuint rtexID;
 
-int texture_target = GL_TEXTURE_RECTANGLE_ARB;
+int texture_target = GL_TEXTURE_2D;
 
 GLfloat texSize = std::sqrt(N) / 2;
 
-int internal_format = GL_RGBA32F_ARB;
+int internal_format = GL_RGBA8;
 
 int texture_format = GL_RGBA;
+
+int data_format = GL_FLOAT;
 
 void init() {
 
@@ -52,11 +54,13 @@ void init() {
 
 	//fill data with random values 
 	for (int i = 0; i < N; i++) {
-		cpu_data1[i] = (rand() % 6) + 1;
+		cpu_data1[i] = ((float)rand() / (RAND_MAX * 2));
+
 	}
 
 	for (int i = 0; i < N; i++) {
-		cpu_data2[i] = (rand() % 6) + 1;
+		cpu_data2[i] = ((float)rand() / (RAND_MAX * 2));
+
 	}
 	
 }
@@ -87,7 +91,7 @@ GLuint createTexture() {
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	// and allocate graphics memory
 	glTexImage2D(texture_target, 0, internal_format,
-		texSize, texSize, 0, texture_format, GL_FLOAT, 0);
+		texSize, texSize, 0, texture_format, data_format, 0);
 	return texID;
 }
 
@@ -102,9 +106,9 @@ void setupScreenQuad() {
 	GLfloat screenQuadVertices[] =
 	{//	x			y			u			v
 		0.0,		0.0,		0.0,		0.0,
-		 texSize,	0.0,		texSize,	0.0,
-		 texSize,	texSize,	texSize,	texSize,
-		0.0,		texSize,	0.0,		texSize
+		 texSize,	0.0,		1.0,	0.0,
+		 texSize,	texSize,	1.0,	1.0,
+		0.0,		texSize,	0.0,		1.0
 	};
 
 	glGenVertexArrays(1, &screenQuadVao);
@@ -142,11 +146,11 @@ void render() {
 	//transfer data to gpu
 	glBindTexture(texture_target, xtexID);
 	glTexSubImage2D(texture_target, 0, 0, 0, texSize, texSize,
-		texture_format, GL_FLOAT, cpu_data1);
+		texture_format, data_format, cpu_data1);
 
 	glBindTexture(texture_target, ytexID);
 	glTexSubImage2D(texture_target, 0, 0, 0, texSize, texSize,
-		texture_format, GL_FLOAT, cpu_data2);
+		texture_format, data_format, cpu_data2);
 
 	//setup shader stuff
 
@@ -168,7 +172,7 @@ void render() {
 
 	//read back data and output result
 	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
-	glReadPixels(0, 0, texSize, texSize, texture_format, GL_FLOAT, result);
+	glReadPixels(0, 0, texSize, texSize, texture_format, data_format, result);
 
 	std::cout << "INPUT" << std::endl;
 	for (int i = 0; i < N; i++) {

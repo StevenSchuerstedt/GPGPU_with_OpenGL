@@ -1,15 +1,15 @@
-#version 330 core
+#version 100
 
-in vec2 texcoord;
+varying mediump vec2 texcoord;
 
 
-uniform sampler2DRect textureX;
-uniform sampler2DRect textureY;
+uniform sampler2D textureX;
+uniform sampler2D textureY;
 
 void main(){
 
-	vec4 x = texture2DRect(textureX, texcoord);
-	vec4 y = texture2DRect(textureY, texcoord);
+	mediump vec4 x = texture2D(textureX, texcoord);
+	mediump vec4 y = texture2D(textureY, texcoord);
 
 	gl_FragColor = x + y;
 }

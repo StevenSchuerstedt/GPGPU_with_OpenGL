@@ -1,9 +1,9 @@
-#version 330 core
+#version 100
 
-layout(location = 0) in vec2 position;
-layout(location = 1) in vec2 Texcoord;
+attribute vec2 position;
+attribute vec2 Texcoord;
 
-out vec2 texcoord;
+varying vec2 texcoord;
 
 uniform mat4 proj;
 void main(){
